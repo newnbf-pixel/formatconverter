@@ -1,0 +1,48 @@
+name: format_converter
+description: "تطبيق تحويل صيغ الملفات (MHT->PDF، صور، نصوص)"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+
+  # اختيار الملفات من الجهاز
+  file_picker: ^8.1.2
+
+  # تحديد أنواع MIME ومساعدة على parsing
+  mime: ^1.0.5
+
+  # مسارات التخزين على الجهاز
+  path_provider: ^2.1.4
+  path: ^1.9.0
+
+  # صلاحيات التخزين (اندرويد قديم)
+  permission_handler: ^11.3.1
+
+  # تحويل الصور بين الصيغ (png, jpg, bmp, gif...)
+  image: ^4.2.0
+
+  # بناء ملفات PDF من نصوص
+  pdf: ^3.11.1
+
+  # تحويل HTML الى PDF عبر WebView حقيقي (الأهم لتحويل MHT->PDF)
+  printing: ^5.13.2
+
+  # قراءة/كتابة CSV
+  csv: ^6.0.0
+
+  # فتح الملف بعد التحويل
+  open_filex: ^4.5.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
