@@ -7,12 +7,17 @@ import 'package:mime/mime.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'converters/image_converter.dart';
 import 'converters/mht_to_pdf.dart';
 import 'converters/text_converter.dart';
 
-void main() => runApp(const FormatConverterApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final preferences = await SharedPreferences.getInstance();
+  runApp(FormatConverterApp(preferences: preferences));
+}
 
 enum FileKind { image, video, audio, text, document, archive, unknown }
 
@@ -37,13 +42,22 @@ class AppSettings {
 }
 
 class FormatConverterApp extends StatefulWidget {
-  const FormatConverterApp({super.key});
+  final SharedPreferences preferences;
+  const FormatConverterApp({super.key, required this.preferences});
   @override
   State<FormatConverterApp> createState() => _FormatConverterAppState();
 }
 
 class _FormatConverterAppState extends State<FormatConverterApp> {
-  AppSettings settings = const AppSettings();
+  late AppSettings settings = AppSettings(
+        themeMode: ThemeMode.values[widget.preferences.getInt('themeMode') ?? ThemeMode.system.index],
+        showMetadata: widget.preferences.getBool('showMetadata') ?? true,
+        saveFolderName: widget.preferences.getString('saveFolderName') ?? 'المحوّل الشامل',
+        maxFileSizeMb: widget.preferences.getInt('maxFileSizeMb') ?? 500,
+        colorSeed: widget.preferences.getInt('colorSeed') ?? 0xff176b5b,
+        enableImageConversion: widget.preferences.getBool('enableImageConversion') ?? true,
+        enableTextConversion: widget.preferences.getBool('enableTextConversion') ?? true,
+      );
 
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -58,10 +72,23 @@ class _FormatConverterAppState extends State<FormatConverterApp> {
             final result = await Navigator.push<SettingsResult>(context, MaterialPageRoute(
               builder: (_) => SettingsPage(settings: settings),
             ));
-            if (result != null) setState(() => settings = result.settings);
+            if (result != null) {
+              setState(() => settings = result.settings);
+              await _saveSettings(result.settings);
+            }
           },
         ),
       );
+
+  Future<void> _saveSettings(AppSettings value) async {
+    await widget.preferences.setInt('themeMode', value.themeMode.index);
+    await widget.preferences.setBool('showMetadata', value.showMetadata);
+    await widget.preferences.setString('saveFolderName', value.saveFolderName);
+    await widget.preferences.setInt('maxFileSizeMb', value.maxFileSizeMb);
+    await widget.preferences.setInt('colorSeed', value.colorSeed);
+    await widget.preferences.setBool('enableImageConversion', value.enableImageConversion);
+    await widget.preferences.setBool('enableTextConversion', value.enableTextConversion);
+  }
 }
 
 class SettingsResult {

@@ -38,6 +38,7 @@ dependencies:
 
   # فتح الملف بعد التحويل
   open_filex: ^4.5.0
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:

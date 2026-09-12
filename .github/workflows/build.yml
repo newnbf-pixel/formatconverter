@@ -36,6 +36,9 @@ jobs:
       - name: إنشاء هيكل تطبيق Flutter كامل (android/ios) تلقائيًا
         run: flutter create --platforms=android app
 
+      - name: ضبط اسم التطبيق في Android
+        run: sed -i 's/android:label="app"/android:label="المحوّل الشامل"/' app/android/app/src/main/AndroidManifest.xml
+
       - name: تحديث إعدادات Android للحزم الحالية
         run: |
           sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/' app/android/app/build.gradle
