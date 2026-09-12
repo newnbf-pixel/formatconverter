@@ -5,7 +5,7 @@ import 'package:csv/csv.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-enum TextFormatOption { txt, csv, json, md, pdf }
+enum TextFormatOption { txt, csv, json, md, html, xml, pdf }
 
 extension TextFormatOptionX on TextFormatOption {
   String get extension => toString().split('.').last;
@@ -36,9 +36,17 @@ class TextConverter {
     switch (target) {
       case TextFormatOption.txt:
       case TextFormatOption.md:
+      case TextFormatOption.html:
+      case TextFormatOption.xml:
         final value = table == null
             ? content
             : table.map((row) => row.join('\t')).join('\n');
+        if (target == TextFormatOption.html) {
+          return Uint8List.fromList(utf8.encode('<!doctype html><html><body><pre>${_escape(value)}</pre></body></html>'));
+        }
+        if (target == TextFormatOption.xml) {
+          return Uint8List.fromList(utf8.encode('<?xml version="1.0" encoding="UTF-8"?>\n<document><content>${_escape(value)}</content></document>'));
+        }
         return Uint8List.fromList(utf8.encode(value));
       case TextFormatOption.csv:
         final value = table == null
@@ -102,4 +110,10 @@ class TextConverter {
     }
     return document.save();
   }
+
+  static String _escape(String value) => value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;');
 }
