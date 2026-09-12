@@ -44,11 +44,10 @@ jobs:
         run: |
           cp my_files/pubspec.yaml app/pubspec.yaml
           mkdir -p app/lib/converters
-          main_file=$(find my_files -maxdepth 2 -type f -name '*main.dart*' -print -quit)
-          cp "$main_file" app/lib/main.dart
-          find my_files -type f -name '*mht_to_pdf.dart*' -exec cp {} app/lib/converters/mht_to_pdf.dart \;
-          find my_files -type f -name '*text_converter.dart*' -exec cp {} app/lib/converters/text_converter.dart \;
-          find my_files -type f -iname '*image_converter.dart*' -size +10c -exec cp {} app/lib/converters/image_converter.dart \;
+          if test -f my_files/lib/main.dart; then cp my_files/lib/main.dart app/lib/main.dart; else cp "$(find my_files -maxdepth 2 -type f -name '*main.dart*' -print -quit)" app/lib/main.dart; fi
+          if test -f my_files/lib/converters/mht_to_pdf.dart; then cp my_files/lib/converters/mht_to_pdf.dart app/lib/converters/mht_to_pdf.dart; else find my_files -type f -name '*mht_to_pdf.dart*' -size +10c -exec cp {} app/lib/converters/mht_to_pdf.dart \; -quit; fi
+          if test -f my_files/lib/converters/text_converter.dart; then cp my_files/lib/converters/text_converter.dart app/lib/converters/text_converter.dart; else find my_files -type f -name '*text_converter.dart*' -size +10c -exec cp {} app/lib/converters/text_converter.dart \; -quit; fi
+          if test -f my_files/lib/converters/image_converter.dart; then cp my_files/lib/converters/image_converter.dart app/lib/converters/image_converter.dart; else find my_files -type f -iname '*image_converter.dart*' -size +10c -exec cp {} app/lib/converters/image_converter.dart \; -quit; fi
 
       - name: تنزيل الحزم
         working-directory: app
