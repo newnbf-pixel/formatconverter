@@ -2,7 +2,11 @@ name: Build APK
 
 on:
   push:
+    branches: [ "main" ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -22,11 +26,15 @@ jobs:
       - name: إنشاء هيكل تطبيق Flutter كامل (android/ios) تلقائيًا
         run: flutter create --platforms=android app
 
-      - name: نسخ الكود الخاص بي داخل الهيكل
+      - name: نسخ الكود وتطبيع أسماء ملفات Dart
         run: |
           cp my_files/pubspec.yaml app/pubspec.yaml
-          rm -rf app/lib
-          cp -r my_files/lib app/lib
+          mkdir -p app/lib/converters
+          main_file=$(find my_files -maxdepth 2 -type f -name '*main.dart*' -print -quit)
+          cp "$main_file" app/lib/main.dart
+          find my_files -type f -name '*mht_to_pdf.dart*' -exec cp {} app/lib/converters/mht_to_pdf.dart \;
+          find my_files -type f -name '*text_converter.dart*' -exec cp {} app/lib/converters/text_converter.dart \;
+          find my_files -type f -iname '*image_converter.dart*' -exec cp {} app/lib/converters/image_converter.dart \;
 
       - name: تنزيل الحزم
         working-directory: app
@@ -41,3 +49,13 @@ jobs:
         with:
           name: app-release-apk
           path: app/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: نشر رابط تنزيل مباشر ثابت
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Latest APK
+          target_commitish: main
+          files: app/build/app/outputs/flutter-apk/app-release.apk
+          overwrite_files: true
+          generate_release_notes: false
