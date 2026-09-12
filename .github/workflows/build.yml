@@ -35,6 +35,7 @@ jobs:
       - name: تحديث إعدادات Android للحزم الحالية
         run: |
           sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/' app/android/app/build.gradle
+          sed -i '/compileSdk = 35/a\    ndkVersion = "26.1.10909125"' app/android/app/build.gradle
           sed -i -E 's/com.android.application" version "[^"]+/com.android.application" version "8.6.1/' app/android/settings.gradle
           sed -i -E 's/org.jetbrains.kotlin.android" version "[^"]+/org.jetbrains.kotlin.android" version "1.9.24/' app/android/settings.gradle
           sed -i -E "s/(kotlin_version[[:space:]]*=[[:space:]]*['\"])[^'\"]+/\11.9.24/" app/android/build.gradle || true

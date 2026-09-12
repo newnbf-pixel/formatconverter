@@ -185,5 +185,25 @@ class _ConverterHomeState extends State<ConverterHome> {
 
   Widget _unsupportedBox() => const Card(child: Padding(padding: EdgeInsets.all(14), child: Text('تم التعرف على نوع الملف، لكن تحويل هذا النوع غير متاح حاليًا.')));
 
-  Widget _resultBox() => Card(color: Theme.of(context).colorScheme.primaryContainer, child: Padding(padding: const EdgeInsets.all(14), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(message!, style: const TextStyle(fontWeight: FontWeight.bold)), if (savedPath != null) ...[const SizedBox(height: 8), Text('مكان الحفظ:\n$savedPath'), OutlinedButton.icon(onPressed: () => OpenFilex.open(savedPath!), icon: const Icon(Icons.open_in_new), label: const Text('فتح الملف الناتج'))]]));
+  Widget _resultBox() => Card(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(message!, style: const TextStyle(fontWeight: FontWeight.bold)),
+              if (savedPath != null) ...[
+                const SizedBox(height: 8),
+                Text('مكان الحفظ:\n$savedPath'),
+                OutlinedButton.icon(
+                  onPressed: () => OpenFilex.open(savedPath!),
+                  icon: const Icon(Icons.open_in_new),
+                  label: const Text('فتح الملف الناتج'),
+                ),
+              ],
+            ],
+          ),
+        ),
+      );
 }
