@@ -26,6 +26,12 @@ jobs:
       - name: إنشاء هيكل تطبيق Flutter كامل (android/ios) تلقائيًا
         run: flutter create --platforms=android app
 
+      - name: تحديث إعدادات Android للحزم الحالية
+        run: |
+          sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 35/' app/android/app/build.gradle
+          sed -i -E 's/(org.jetbrains.kotlin.android" version ")[^"]+/\11.9.24/' app/android/settings.gradle
+          sed -i -E "s/(kotlin_version[[:space:]]*=[[:space:]]*['\"])[^'\"]+/\11.9.24/" app/android/build.gradle || true
+
       - name: نسخ الكود وتطبيع أسماء ملفات Dart
         run: |
           cp my_files/pubspec.yaml app/pubspec.yaml
@@ -34,7 +40,7 @@ jobs:
           cp "$main_file" app/lib/main.dart
           find my_files -type f -name '*mht_to_pdf.dart*' -exec cp {} app/lib/converters/mht_to_pdf.dart \;
           find my_files -type f -name '*text_converter.dart*' -exec cp {} app/lib/converters/text_converter.dart \;
-          find my_files -type f -iname '*image_converter.dart*' -exec cp {} app/lib/converters/image_converter.dart \;
+          find my_files -type f -iname '*image_converter.dart*' -size +10c -exec cp {} app/lib/converters/image_converter.dart \;
 
       - name: تنزيل الحزم
         working-directory: app
