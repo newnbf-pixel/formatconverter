@@ -69,7 +69,7 @@ class _FormatConverterAppState extends State<FormatConverterApp> {
         home: ConverterHome(
           settings: settings,
           onSettings: () async {
-            final result = await Navigator.push<SettingsResult>(context, MaterialPageRoute(
+            final result = await Navigator.of(context, rootNavigator: true).push<SettingsResult>(MaterialPageRoute(
               builder: (_) => SettingsPage(settings: settings),
             ));
             if (result != null) {
@@ -248,6 +248,20 @@ class _ConverterHomeState extends State<ConverterHome> {
           FilledButton.icon(onPressed: busy ? null : chooseFile, icon: const Icon(Icons.attach_file), label: const Text('إرفاق ملف')),
           const SizedBox(height: 10),
           OutlinedButton.icon(onPressed: busy ? null : widget.onSettings, icon: const Icon(Icons.settings_outlined), label: const Text('فتح الإعدادات')),
+          const SizedBox(height: 18),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                const Text('إعدادات سريعة', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 6),
+                Text('الثيم: ${_themeLabel()} | الحد الأقصى: ${widget.settings.maxFileSizeMb} MB'),
+                Text('عرض البيانات: ${widget.settings.showMetadata ? 'مفعّل' : 'متوقف'}'),
+                const SizedBox(height: 10),
+                FilledButton.icon(onPressed: busy ? null : widget.onSettings, icon: const Icon(Icons.tune), label: const Text('تعديل كل الإعدادات')),
+              ]),
+            ),
+          ),
           if (file != null) ...[const SizedBox(height: 16), _fileInfo(), const SizedBox(height: 12), if (availableTargets().isNotEmpty) _conversionBox() else _unsupportedBox()],
           if (busy) const Padding(padding: EdgeInsets.all(20), child: Center(child: CircularProgressIndicator())),
           if (message != null) _resultBox(),
@@ -255,6 +269,8 @@ class _ConverterHomeState extends State<ConverterHome> {
           const Center(child: Text('تصميم وتطوير: نواف فراج العنزي', style: TextStyle(fontSize: 12))),
         ]),
       ));
+
+  String _themeLabel() => switch (widget.settings.themeMode) { ThemeMode.system => 'تلقائي', ThemeMode.light => 'فاتح', ThemeMode.dark => 'داكن' };
 
   Widget _fileInfo() => Card(child: ListTile(leading: Icon(_kindIcon()), title: Text(file!.name), subtitle: widget.settings.showMetadata ? Text('النوع: ${_kindLabel()}\nالصيغة: ${extension.toUpperCase()}\nالحجم: ${(file!.size / 1024 / 1024).toStringAsFixed(2)} MB\nMIME: ${lookupMimeType(file!.name) ?? 'غير معروف'}') : null));
 
