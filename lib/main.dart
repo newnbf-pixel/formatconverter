@@ -116,6 +116,10 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: const Text('الإعدادات')),
         body: ListView(padding: const EdgeInsets.all(16), children: [
+        const Text('إعدادات المحوّل الشامل', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 6),
+        const Text('تحكم في طريقة العرض، الصيغ، حجم الملفات، ومكان حفظ النتائج.'),
+        const SizedBox(height: 18),
           DropdownButtonFormField<ThemeMode>(
             value: themeMode,
             decoration: const InputDecoration(labelText: 'الثيم', border: OutlineInputBorder()),
@@ -242,6 +246,8 @@ class _ConverterHomeState extends State<ConverterHome> {
           const Text('يتعرف على نوع الملف ويعرض الصيغ المناسبة للتحويل'),
           const SizedBox(height: 18),
           FilledButton.icon(onPressed: busy ? null : chooseFile, icon: const Icon(Icons.attach_file), label: const Text('إرفاق ملف')),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(onPressed: busy ? null : widget.onSettings, icon: const Icon(Icons.settings_outlined), label: const Text('فتح الإعدادات')),
           if (file != null) ...[const SizedBox(height: 16), _fileInfo(), const SizedBox(height: 12), if (availableTargets().isNotEmpty) _conversionBox() else _unsupportedBox()],
           if (busy) const Padding(padding: EdgeInsets.all(20), child: Center(child: CircularProgressIndicator())),
           if (message != null) _resultBox(),
